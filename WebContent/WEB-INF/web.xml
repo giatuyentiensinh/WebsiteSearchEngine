@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+
+
+	<display-name>WebsiteSearchEngine</display-name>
+	<!-- JSP Config -->
+	<servlet>
+		<servlet-name>JSPSearch</servlet-name>
+		<jsp-file>/bootstrap/search.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>JSPSearch</servlet-name>
+		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- Servlet Config -->
+	<servlet>
+		<servlet-name>ServletSearch</servlet-name>
+		<servlet-class>com.hust.servlet.Search</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServletSearch</servlet-name>
+		<url-pattern>/response</url-pattern>
+	</servlet-mapping>
+
+</web-app>
