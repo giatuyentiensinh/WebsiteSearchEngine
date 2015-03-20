@@ -21,7 +21,6 @@ public class Search {
 		// match query
 		QueryBuilder qb = QueryBuilders.matchQuery("_all", value);
 
-		
 		// QueryBuilder qb = QueryBuilders.matchQuery(fields, value)
 		// .operator(Operator.AND).zeroTermsQuery(ZeroTermsQuery.ALL);
 
@@ -96,10 +95,10 @@ public class Search {
 		// FilterBuilders.existsFilter("location.geometry.location");
 
 		// geo distance Filter
-		 FilterBuilder fb = FilterBuilders
-		 .geoDistanceFilter("location.geometry.location")
-		 .point(20.9942627, 105.8428367)
-		 .distance(1000, DistanceUnit.KILOMETERS).optimizeBbox("memory");
+		FilterBuilder fb = FilterBuilders
+				.geoDistanceFilter("location.geometry.location")
+				.point(20.9942627, 105.8428367)
+				.distance(1000, DistanceUnit.KILOMETERS).optimizeBbox("memory");
 
 		// geo distance range Filter
 		// FilterBuilder fb = FilterBuilders
@@ -127,8 +126,8 @@ public class Search {
 		// FilterBuilder fb = FilterBuilders.prefixFilter("loaibds", "bán");
 
 		// query filter
-//		FilterBuilder fb = FilterBuilders.queryFilter(QueryBuilders
-//				.queryString("Hà Nội OR Ha noi OR Hanoi"));
+		// FilterBuilder fb = FilterBuilders.queryFilter(QueryBuilders
+		// .queryString("Hà Nội OR Ha noi OR Hanoi"));
 
 		SearchResponse response = client.prepareSearch(ConstFieldValue.INDEX)
 				.setPostFilter(fb).execute().actionGet();
@@ -138,13 +137,13 @@ public class Search {
 		// .execute().actionGet();
 
 		System.out.println(response);
-//		GetResult.showHist(response);
+		// GetResult.showHist(response);
 		System.out.println(fb);
 	}
 
 	public static void main(String[] args) {
 		Client client = Connect.getClient();
-//		search(client, "diachi", "Dương Nội, Hà Đông, Hà Nội");
-		 filterSearch(client, "", "");
+		search(client, "diachi", "Dương Nội, Hà Đông, Hà Nội");
+		// filterSearch(client, "", "");
 	}
 }

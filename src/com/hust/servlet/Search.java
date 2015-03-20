@@ -11,13 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.elasticsearch.action.search.MultiSearchRequestBuilder;
-import org.elasticsearch.action.search.MultiSearchResponse;
-import org.elasticsearch.action.search.MultiSearchResponse.Item;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.DistanceUnit;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -56,42 +53,19 @@ public class Search extends HttpServlet {
 
 			Map<String, String> data = new HashMap<String, String>();
 			String[] fields = type[1].split("\\$");
-			Client client = Connect.getClient();
-			MultiSearchRequestBuilder msqb = new MultiSearchRequestBuilder(
-					client);
+			BoolQueryBuilder query = QueryBuilders.boolQuery();
 
 			for (String str : fields) {
 				String[] split = str.split("\\:");
 				data.put(split[0], split[1]);
-				qb = QueryBuilders.boolQuery().must(
-						QueryBuilders.matchQuery(split[0], split[1]));
-				SearchRequestBuilder sqb = client.prepareSearch(ConstFieldValue.INDEX)
-						.setTypes(ConstFieldValue.TYPE).setQuery(qb);
-				System.out.println(sqb);
-				msqb.add(sqb);
-			}
-			// Thua
-			MultiSearchResponse msr = msqb.execute().actionGet();
-			Item[] responses = msr.getResponses();
-			for(int i = 0; i < fields.length; i++) {
-				SearchHit[] hits = responses[i].getResponse().getHits().getHits();
-				for (SearchHit result : hits) {
-					System.out
-					.println("---------------------------------------Information---------------------------------------");
-					System.out.printf("| %-12s | %-27f |\n", "score", result.getScore());
-					System.out.printf("| %-12s | %-27s |\n", "_ID", result.getId());
-					for (String key : result.getSource().keySet()) {
-						System.out.printf("| %-12s | %s \n", key, result.getSource().get(key));
-					}
-					System.out
-					.println("-----------------------------------------------------------------------------------------");
-				}
-			}
-			// -Thua
-			
-			
-			// qb = QueryBuilders.matchQuery(key, data.get(key));
+				query.must(QueryBuilders.matchQuery(split[0], split[1]));
 
+			}
+
+			System.out.println(query);
+
+			// qb = QueryBuilders.matchQuery(key, data.get(key));
+			qb = query;
 			choiseQuery(qb, fb, response);
 		} else if (type[0].equals("f")) {
 			String[] fields = type[1].split(",");
@@ -117,7 +91,7 @@ public class Search extends HttpServlet {
 					.prepareSearch(ConstFieldValue.INDEX)
 					.setTypes(ConstFieldValue.TYPE).setQuery(qb).execute()
 					.actionGet();
-			
+
 			showResult(response2, response);
 		} else {
 			SearchResponse response2 = client
@@ -128,15 +102,17 @@ public class Search extends HttpServlet {
 		}
 	}
 
-	private void showResult(SearchResponse response2, HttpServletResponse response) {
+	private void showResult(SearchResponse response2,
+			HttpServletResponse response) {
 		try {
 			SearchHit[] hits = response2.getHits().getHits();
 			PrintWriter out = response.getWriter();
-			out.println("<br /> Total     : " + response2.getHits().getTotalHits());
-			out.println("<br /> Max score : " + response2.getHits().getMaxScore());
+			out.println("<br /> Total     : "
+					+ response2.getHits().getTotalHits());
+			out.println("<br /> Max score : "
+					+ response2.getHits().getMaxScore());
 			out.println("<br /> Time      : " + response2.getTook());
-			
-			
+
 			for (SearchHit searchHit : hits) {
 				Map<String, Object> result = searchHit.getSource();
 				out.println("<br />------------------------------------------------------------------------------Information------------------------------------------------------------------------------");
