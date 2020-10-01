@@ -1,6 +1,6 @@
 # Website search Engine
 
-## JSP and Servelet
+## JSP and Servlet
 
 ## Search engine
 * [Elasticsearch](https://www.elastic.co/): version 1.4.4
